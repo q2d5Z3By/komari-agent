@@ -270,6 +270,7 @@ wss.on('connection', (ws, req) => {
         return;
       }
     }
+    
 
     if (!handleTrojanConnection(ws, msg)) {
       ws.close();
@@ -277,7 +278,7 @@ wss.on('connection', (ws, req) => {
   }).on('error', () => {});
 });
 
-httpServer.listen(PORT, () => {
+httpServer.listen(PORT, '0.0.0.0', () => {
   const scheme = tlsOptions ? 'HTTPS/WSS' : 'HTTP/WS';
   console.log(`Server is running on ${scheme} port ${PORT}`);
 });
