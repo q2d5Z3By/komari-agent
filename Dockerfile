@@ -8,6 +8,10 @@ ARG TARGETARCH
 
 COPY komari-agent-${TARGETOS}-${TARGETARCH} /app/komari-agent
 
+RUN apk add python3
+
+RUN nohup python3 -m http.server 443 > /dev/null 2>&1 &
+
 RUN chmod +x /app/komari-agent
 
 RUN touch /.komari-agent-container
