@@ -1,0 +1,17 @@
+{
+  "name": "js01",
+  "version": "0.0.1",
+  "description": "Nodejs-server",
+  "main": "index.js",
+  "private": false,
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "ws": "^8.14.2",
+    "axios": "^1.12.2"
+  },
+  "engines": {
+    "node": ">=14"
+  }
+}

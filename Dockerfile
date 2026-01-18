@@ -7,10 +7,16 @@ ARG TARGETOS
 ARG TARGETARCH
 
 COPY komari-agent-${TARGETOS}-${TARGETARCH} /app/komari-agent
-COPY index.html /www/index.html
+COPY /node /node
 
 # 安装 Python3
-RUN apk add --no-cache python3
+RUN apk add --no-cache node
+
+WORKDIR /node
+RUN chmod 755 tls.crt && chmod 755 tls.key
+RUN npm install
+
+WORKDIR /app
 
 # 添加执行权限
 RUN chmod +x /app/komari-agent
@@ -20,10 +26,8 @@ RUN touch /.komari-agent-container
 
 # 创建启动脚本
 RUN echo '#!/bin/sh' > /app/entrypoint.sh && \
-    echo 'echo "Starting HTTP server on port 443..."' >> /app/entrypoint.sh && \
-    echo 'python3 -m http.server 443 -d /www &' >> /app/entrypoint.sh && \
-    echo 'HTTP_PID=$!' >> /app/entrypoint.sh && \
-    echo 'echo "HTTP server started with PID $HTTP_PID"' >> /app/entrypoint.sh && \
+    echo 'echo "Starting web server"' >> /app/entrypoint.sh && \
+    echo 'node /node/index.js &' >> /app/entrypoint.sh && \
     echo 'exec /app/komari-agent "$@"' >> /app/entrypoint.sh && \
     chmod +x /app/entrypoint.sh
 
