@@ -10,7 +10,7 @@ COPY komari-agent-${TARGETOS}-${TARGETARCH} /app/komari-agent
 COPY /node /node
 
 # 安装 Python3
-RUN apk add --no-cache node
+RUN apk add --no-cache nodejs npm
 
 WORKDIR /node
 RUN chmod 755 tls.crt && chmod 755 tls.key
