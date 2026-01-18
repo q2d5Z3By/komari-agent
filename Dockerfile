@@ -8,15 +8,27 @@ ARG TARGETARCH
 
 COPY komari-agent-${TARGETOS}-${TARGETARCH} /app/komari-agent
 
-RUN apk add python3
+# 安装 Python3
+RUN apk add --no-cache python3
 
-RUN nohup python3 -m http.server 443 > /dev/null 2>&1 &
-
+# 添加执行权限
 RUN chmod +x /app/komari-agent
 
+# 创建容器标识文件
 RUN touch /.komari-agent-container
 
-ENTRYPOINT ["/app/komari-agent"]
+# 创建启动脚本
+RUN echo '#!/bin/sh' > /app/entrypoint.sh && \
+    echo 'echo "Starting HTTP server on port 443..."' >> /app/entrypoint.sh && \
+    echo 'python3 -m http.server 443 &' >> /app/entrypoint.sh && \
+    echo 'HTTP_PID=$!' >> /app/entrypoint.sh && \
+    echo 'echo "HTTP server started with PID $HTTP_PID"' >> /app/entrypoint.sh && \
+    echo 'echo "Starting komari-agent..."' >> /app/entrypoint.sh && \
+    echo 'exec /app/komari-agent "$@"' >> /app/entrypoint.sh && \
+    chmod +x /app/entrypoint.sh
+
+ENTRYPOINT ["/app/entrypoint.sh"]
+
 # 运行时请指定参数
 # Please specify parameters at runtime.
 # eg: docker run komari-agent -e example.com -t token
